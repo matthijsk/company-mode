@@ -66,6 +66,10 @@ or automatically through a custom `company-clang-prefix-guesser'."
   :type 'boolean
   :package-version '(company . "0.8.0"))
 
+(defcustom company-clang-compilers '("clang" "Apple LLVM")
+  "List of clang-based compiler identifiers."
+  :type '(repeat (string :tag "Compiler")))
+
 ;; prefix ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defvar company-clang--prefix nil)
@@ -297,7 +301,8 @@ or automatically through a custom `company-clang-prefix-guesser'."
   (with-temp-buffer
     (call-process company-clang-executable nil t nil "--version")
     (goto-char (point-min))
-    (if (re-search-forward "\\(clang\\|Apple LLVM\\) version \\([0-9.]+\\)" nil t)
+    (if (re-search-forward
+         (concat (regexp-opt company-clang-compilers t) " version \\([0-9.]+\\)") nil t)
         (cons
          (if (equal (match-string-no-properties 1) "Apple LLVM")
              'apple
